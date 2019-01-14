@@ -1,0 +1,39 @@
+{
+  "generator-jhipster": {
+    "promptValues": {
+      "packageName": "com.ebiznext.comet.editor",
+      "nativeLanguage": "en"
+    },
+    "jhipsterVersion": "5.7.2",
+    "applicationType": "monolith",
+    "baseName": "comet_editor",
+    "packageName": "com.ebiznext.comet.editor",
+    "packageFolder": "com/ebiznext/comet/editor",
+    "serverPort": "8080",
+    "authenticationType": "jwt",
+    "cacheProvider": "ehcache",
+    "enableHibernateCache": true,
+    "websocket": false,
+    "databaseType": "sql",
+    "devDatabaseType": "h2Disk",
+    "prodDatabaseType": "postgresql",
+    "searchEngine": false,
+    "messageBroker": false,
+    "serviceDiscoveryType": false,
+    "buildTool": "maven",
+    "enableSwaggerCodegen": false,
+    "jwtSecretKey": "NjY0YzI0MGVmOWM2ZmZlYTRhZWVjNzFlOTNhZGIxOTY2ZjA2MTUzMDgwMjE5MDdmY2RiZGE2MmE3MTVjYjI3NWYzYzIwNTIyYWZlZjJjNzRkYWEwN2Q3MDA5YzA0MTk0NTAwMzZmOWVjOTg5YTg1N2FhZGE3NTM1YTg5OWVmOWI=",
+    "clientFramework": "angularX",
+    "useSass": true,
+    "clientPackageManager": "npm",
+    "testFrameworks": [],
+    "jhiPrefix": "jhi",
+    "otherModules": [],
+    "enableTranslation": true,
+    "nativeLanguage": "en",
+    "languages": [
+      "en",
+      "fr"
+    ]
+  }
+}

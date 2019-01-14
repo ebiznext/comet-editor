@@ -1,0 +1,11 @@
+version: '2'
+services:
+    comet_editor-postgresql:
+        image: postgres:10.4
+        # volumes:
+        #     - ~/volumes/jhipster/comet_editor/postgresql/:/var/lib/postgresql/data/
+        environment:
+            - POSTGRES_USER=comet_editor
+            - POSTGRES_PASSWORD=
+        ports:
+            - 5432:5432

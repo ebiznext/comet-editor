@@ -1,0 +1,15 @@
+version: '2'
+services:
+    comet_editor-app:
+        image: comet_editor
+        environment:
+            - _JAVA_OPTIONS=-Xmx512m -Xms256m
+            - SPRING_PROFILES_ACTIVE=prod,swagger
+            - SPRING_DATASOURCE_URL=jdbc:postgresql://comet_editor-postgresql:5432/comet_editor
+            - JHIPSTER_SLEEP=10 # gives time for the database to boot before the application
+        ports:
+            - 8080:8080
+    comet_editor-postgresql:
+        extends:
+            file: postgresql.yml
+            service: comet_editor-postgresql
