@@ -5,6 +5,7 @@
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
 
     <logger name="com.ebiznext.comet.editor" level="INFO"/>
+    <logger name="com.ebiznext.comet.editor.service" level="DEBUG"/>
 
     <logger name="io.github.jhipster" level="WARN"/>
 

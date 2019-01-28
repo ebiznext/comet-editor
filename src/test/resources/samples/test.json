@@ -1,0 +1,19 @@
+{
+    "name": "test",
+    "dir": "/Users/hayssams/git/comet/app/back/src/test/resources/incoming/test",
+    "metadata": {
+        "mode": "FILE",
+        "format": "DSV",
+        "withHeader": false
+    },
+    "schemas": [
+        {
+            "name": "schema1",
+            "pattern": "OneClient_Segmentation.*.*"
+        },
+        {
+            "name": "schema2",
+            "pattern": "OneClient_Contact.*"
+        }
+    ]
+}
