@@ -117,12 +117,24 @@
             <groupId>comet</groupId>
             <artifactId>comet_2.11</artifactId>
             <version>0.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-client -->
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-client</artifactId>
             <version>2.2.0</version> <!-- first the version used in comet, then test with the latest 2.7.3 -->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-scala -->
@@ -366,6 +378,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cloud-connectors</artifactId>
         </dependency>
+
         <!-- Security -->
         <dependency>
             <groupId>org.springframework.security</groupId>
