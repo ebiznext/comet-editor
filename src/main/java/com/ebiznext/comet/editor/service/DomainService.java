@@ -14,6 +14,8 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import org.apache.hadoop.fs.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import scala.collection.Iterator;
 
@@ -35,13 +37,14 @@ public class DomainService extends AbstractLoadAndSaveService {
     private final static String YAML_EXT = ".yml";
     private final static String JSON_EXT = ".json";
 
-
-    public DomainService(String workingDir, HdfsStorageHandler storageHandler) {
-        super(workingDir, storageHandler);
+    @Autowired
+    public DomainService(@Value("${application.directory}") String workingDir){
+        super(workingDir, new HdfsStorageHandler());
 
         initWorkingDir();
-
     }
+
+
 
     /**
      * the working dir tree looks like this :
@@ -93,7 +96,7 @@ public class DomainService extends AbstractLoadAndSaveService {
      * @throws IOException
      */
     public JsonNode getDomain(String domainName) throws IOException {
-        return loadAsJson(domainName);
+        return loadAsJson(domainName+YAML_EXT);
     }
 
     /**
@@ -154,18 +157,21 @@ public class DomainService extends AbstractLoadAndSaveService {
      */
     public List<String> listAllDomainsFile(){
         List<String> filenames = new ArrayList();
+        Path path = new Path(workingDir);
+        log.info("listAllDomainsFile : "+path.toString());
 
-        Path path = new Path(Path.CUR_DIR +Path.SEPARATOR + workingDir);
-
-        scala.collection.immutable.List<Path> paths = storageHandler.list(path, "", LocalDateTime.MIN);
+        scala.collection.immutable.List<Path> paths = storageHandler.list(path, "yml", LocalDateTime.MIN);
         if(paths.isEmpty())
-            System.out.println("empty directory");
+            log.warn("no domain or YAML files found or empty directory");
 
 //        Decorators.AsJava<java.util.List<Path>> jPaths = scala.collection.JavaConverters.mutableSeqAsJavaListConverter(new scala.collection.mutable.MutableList<>(paths));
 
         scala.collection.Iterator<Path> it = paths.iterator();
         while(it.hasNext()){
-            filenames.add(it.next().getName());
+
+            String filename = it.next().getName();
+            String domainName = filename.substring(0, filename.indexOf(YAML_EXT));
+            filenames.add(domainName);
         }
         return filenames;
     }

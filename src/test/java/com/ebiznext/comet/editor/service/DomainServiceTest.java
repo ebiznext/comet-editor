@@ -1,15 +1,16 @@
 package com.ebiznext.comet.editor.service;
 
-import com.ebiznext.comet.schema.handlers.HdfsStorageHandler;
 import com.ebiznext.comet.schema.model.Domain;
 import com.fasterxml.jackson.databind.JsonNode;
-import org.apache.hadoop.fs.Path;
+import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.time.LocalDate;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -18,7 +19,27 @@ public class DomainServiceTest {
 
     private final Logger log = LoggerFactory.getLogger(DomainServiceTest.class);
 
-    private DomainService service = new DomainService(Path.CUR_DIR +Path.SEPARATOR + "src/test/resources/samples/generated_test_results/", new HdfsStorageHandler());
+    private String samplesDir = org.apache.hadoop.fs.Path.CUR_DIR +org.apache.hadoop.fs.Path.SEPARATOR + "src/test/resources/samples/";
+    private String defaultWorkingDir = org.apache.hadoop.fs.Path.CUR_DIR +org.apache.hadoop.fs.Path.SEPARATOR + "src/test/resources/samples/generated_test_results/";
+
+
+    private DomainService service;
+
+    @Before
+    public void setUp() throws IOException {
+         service = new DomainService(defaultWorkingDir);
+        // copy dream.yml from samples to workingDir
+        String filename = "dream.yml";
+        if(!Files.exists(Paths.get(defaultWorkingDir+filename)))
+            Files.copy(Paths.get(samplesDir+filename), Paths.get(defaultWorkingDir+filename));
+
+        if(!Files.exists(Paths.get(defaultWorkingDir+"test.json")))
+            Files.copy(Paths.get(samplesDir+filename), Paths.get(defaultWorkingDir+"test.json"));
+
+        if(!Files.exists(Paths.get(defaultWorkingDir+"types.yml")))
+            Files.copy(Paths.get(samplesDir+filename), Paths.get(defaultWorkingDir+"types.yml"));
+
+    }
 
     @Test
     public void test_loadAsClass() throws IOException {
@@ -28,7 +49,7 @@ public class DomainServiceTest {
     }
 
     @Test
-    public void test_loadAsJson() throws IOException {
+    public void test_loadAsJson() throws IOException, URISyntaxException {
         String filename = "dream.yml";
         JsonNode json = service.loadAsJson(filename);
         assertNotNull(json);
@@ -44,7 +65,7 @@ public class DomainServiceTest {
         assertNotNull(json);
         System.out.println(json);
         assertNotNull("dream", json.get("name"));
-        service.saveAsJson("generated_test_results/dream.json", json);
+        service.saveAsJson("dream.json", json);
     }
 
 
@@ -52,35 +73,32 @@ public class DomainServiceTest {
     public void test_saveDomain_withSmallTestFile() throws IOException {
         String filename = "test";
         JsonNode json = service.loadAsJson(filename+".json");
-        boolean res = service.saveDomainInStaging("generated_test_results", json);
+        boolean res = service.saveDomainInStaging("small_test_file", json);
         assertTrue(res);
     }
 
     @Test
     public void test_saveDomain_withBigDomainFile() throws IOException {
-        String filename = "dream.yml";
+        String filename = "dream";
         JsonNode domain = service.getDomain(filename);
-        boolean res = service.saveDomainInStaging("generated_test_results", domain);
+        boolean res = service.saveDomainInStaging("big_domain_file", domain);
         assertTrue(res);
     }
 
 
     @Test
-    public void listAllDomainsFile() {
+    public void test_listAllDomainsFile() {
 
         List<String> filenames = service.listAllDomainsFile();
         assertNotNull(filenames);
         assertTrue(!filenames.isEmpty());
         assertEquals(2, filenames.size());
-//        assertTrue(filenames.stream().anyMatch(s -> "toto.txt".equalsIgnoreCase(s)));
-        assertTrue(filenames.stream().anyMatch(s -> "dream.yml".equalsIgnoreCase(s)));
-        assertTrue(filenames.stream().anyMatch(s -> "types.yml".equalsIgnoreCase(s)));
-
+        assertTrue(filenames.stream().anyMatch(s -> "dream".equalsIgnoreCase(s)));
     }
 
     @Test
     public void test_getGeneralMetadata() throws IOException {
-        JsonNode metadata = service.getGeneralMetadata("dream.yml");
+        JsonNode metadata = service.getGeneralMetadata("dream");
         assertNotNull(metadata);
         log.debug(metadata.toString());
         assertEquals("FILE",metadata.get("mode").textValue());
@@ -89,7 +107,7 @@ public class DomainServiceTest {
 
     @Test
     public void test_getSchemaNames() throws IOException {
-        List<String> schemaNames = service.getSchemaNames("dream.yml");
+        List<String> schemaNames = service.getSchemaNames("dream");
         assertNotNull(schemaNames);
         assertFalse(schemaNames.isEmpty());
         assertEquals(2, schemaNames.size());
@@ -101,7 +119,7 @@ public class DomainServiceTest {
     public void test_getSchema() throws IOException {
 
         String expectedSchemaName = "client";
-        JsonNode schemaNode = service.getSchema("dream.yml", expectedSchemaName);
+        JsonNode schemaNode = service.getSchema("dream", expectedSchemaName);
 
         assertNotNull(schemaNode);
         assertEquals(expectedSchemaName, schemaNode.get("name").asText());
@@ -112,6 +130,10 @@ public class DomainServiceTest {
     @Test
     public void test_publish() throws IOException {
         String domainName = "dream";
+
+        JsonNode domain = service.getDomain(domainName);
+        service.saveDomainInStaging("",domain);
+
         boolean res = service.publish(domainName);
         assertTrue(res);
     }
@@ -128,9 +150,13 @@ public class DomainServiceTest {
         String filename = "dream.yml";
         JsonNode json = service.loadAsJson(filename);
         String domainContent = json.toString();
-        log.info("domainContent="+domainContent);
+        assertNotNull(domainContent);
+        assertFalse(domainContent.isEmpty());
+        log.debug("domainContent="+domainContent);
         String typeContent = service.loadAsJson("types.yml").toString();
-        log.info("typeContent="+typeContent);
+        assertNotNull(typeContent);
+        assertFalse(typeContent.isEmpty());
+        log.debug("typeContent="+typeContent);
         service.validate(domainContent, typeContent);
 
     }
