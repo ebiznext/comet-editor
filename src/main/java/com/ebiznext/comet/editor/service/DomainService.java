@@ -283,12 +283,13 @@ public class DomainService extends AbstractLoadAndSaveService {
 
         SchemaHandler schemaHandler = new SchemaHandler(storageHandler);
 
+        /*
         Domain domain = schemaHandler.fromYAML(domainContent);
 
         Types types = schemaHandler.fromYAML(typeContent);
 
         domain.checkValidity(types);
-
+        */
     }
     /**
      * Validate first, then publish the file (overwrite the existing version)
