@@ -3,7 +3,6 @@ package com.ebiznext.comet.editor.service;
 import com.ebiznext.comet.schema.handlers.HdfsStorageHandler;
 import com.ebiznext.comet.schema.handlers.SchemaHandler;
 import com.ebiznext.comet.schema.model.Domain;
-import com.ebiznext.comet.schema.model.Types;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,6 +10,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import com.fasterxml.jackson.module.scala.DefaultScalaModule;
 import org.apache.hadoop.fs.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +73,7 @@ public class DomainService extends AbstractLoadAndSaveService {
     protected Domain loadAsClass(String filename) throws IOException {
 
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-//        mapper.registerModule(DefaultScalaModule);
+        mapper.registerModule(new DefaultScalaModule());
 
 
         Path path = new Path(workingDir + Path.SEPARATOR + filename);
